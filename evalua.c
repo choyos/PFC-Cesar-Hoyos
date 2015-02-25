@@ -9,7 +9,7 @@ Nombre: César*/
 #include <string.h>
 #include "typedef.h"
 #include <time.h>
-
+#include "evalua.h"
 
 #define LUNES 0
 #define MARTES 1
@@ -19,10 +19,34 @@ Nombre: César*/
 #define SABADO 5
 #define DOMINGO 6
 
-int bisiesto(int year);
-//void obtenerMatrix(int filasMatrix,int TAM,int *matrixResult[][TAM], int *matrix1[filasMatrix][TAM], int numPedidos, int *vTamPedidos[]);
+float evalua(int** pedidos, int horizonte, int retraso){
+	//Inicializacion de variables
+	int i;
+	int k;
+	float J = 0;
+	int *stock;
+	int stockinicial=10;
+	int *repartidos;
+	float precio_med=0.7;
+	float precio_alm=0.2;
 
-float evalua(int argc, char *argv[]){
-		
+	//Inicializacion de tablas
+	stock= (int*) malloc(horizonte*sizeof(int));
+	repartidos=(int*) malloc(horizonte*sizeof(int));
+	
+	stock[0]=stockinicial;
+	
+	//Calculo de J y stock
+	for(k=0;k<horizonte;k++){
+		if(k==0){
+			stock[k]=stockinicial;
+		}else{
+			stock[k]=stock[k-1]+pedidos[k]-repartidos[k];
+		}
+		if(stock[k]<=0){
+			break;
+		}
+		J = J+precio_med*pedidos[k]+precio_alm*stock[k];
+	}		
 	return J;
 }

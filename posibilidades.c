@@ -9,7 +9,7 @@ Nombre: César*/
 #include <string.h>
 #include "typedef.h"
 #include <time.h>
-
+#include "evalua.h"
 
 #define LUNES 0
 #define MARTES 1
