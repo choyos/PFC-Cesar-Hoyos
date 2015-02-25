@@ -4,11 +4,10 @@
 /*Apellidos: Hoyos Martín
 Nombre: César*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifndef EVALUA_H
+#define EVALUA_H
+#endif
+
 #include "typedef.h"
-#include <time.h>
 
-
-float evalua(int argc, char *argv[]);
+float evalua(int** pedidos, int horizonte, int retraso);

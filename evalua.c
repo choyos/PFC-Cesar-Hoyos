@@ -35,18 +35,25 @@ float evalua(int** pedidos, int horizonte, int retraso){
 	repartidos=(int*) malloc(horizonte*sizeof(int));
 	
 	stock[0]=stockinicial;
+
+	/*
+		Inicializa el vector de repartidos a todo 1
+	*/
+	for(i=0;i<horizonte;i++){
+		repartidos[i]=1;
+	}
 	
 	//Calculo de J y stock
 	for(k=0;k<horizonte;k++){
 		if(k==0){
 			stock[k]=stockinicial;
 		}else{
-			stock[k]=stock[k-1]+pedidos[k]-repartidos[k];
+			stock[k]=stock[k-1]+(*pedidos)[k]-repartidos[k];
 		}
 		if(stock[k]<=0){
 			break;
 		}
-		J = J+precio_med*pedidos[k]+precio_alm*stock[k];
+		J = J+precio_med*(*pedidos)[k]+precio_alm*stock[k];
 	}		
 	return J;
 }
