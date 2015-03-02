@@ -38,6 +38,7 @@ float evalua(int** pedidos, int horizonte, int retraso, int ** stock){
 	*/
 	for(i=0;i<horizonte;i++){
 		repartidos[i]=1;
+		
 	}
 	
 	//Calculo de J y stock

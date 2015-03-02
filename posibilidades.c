@@ -488,7 +488,11 @@ int main(int argc, char *argv[]){
 							printf("\n");
 						}
 						printf("Filas de pedido: %d\n",filasPedidos);
-						
+						//Liberamos espacio ocupado de forma inutil
+						free(matrix1);
+						matrix1=NULL;
+						free(matrixAux1);
+						matrixAux1=NULL;
 						// Una vez obtenidas todas las posibles combinaciones
 						// para un determinado horizonte, procedemos al cálculo
 						// y consiguiente obtención de los días de pedidos
