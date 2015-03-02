@@ -19,22 +19,18 @@ Nombre: César*/
 #define SABADO 5
 #define DOMINGO 6
 
-float evalua(int** pedidos, int horizonte, int retraso){
+float evalua(int* pedidos, int horizonte, int retraso, int* stock){
 	//Inicializacion de variables
 	int i;
 	int k;
 	float J = 0;
-	int *stock;
-	int stockinicial=10;
+	int stockinicial=1;
 	int *repartidos;
 	float precio_med=0.7;
 	float precio_alm=0.2;
 
 	//Inicializacion de tablas
-	stock= (int*) malloc(horizonte*sizeof(int));
 	repartidos=(int*) malloc(horizonte*sizeof(int));
-	
-	stock[0]=stockinicial;
 
 	/*
 		Inicializa el vector de repartidos a todo 1
@@ -47,13 +43,21 @@ float evalua(int** pedidos, int horizonte, int retraso){
 	for(k=0;k<horizonte;k++){
 		if(k==0){
 			stock[k]=stockinicial;
+		//	printf("%d\n",*stock[k] );
 		}else{
-			stock[k]=stock[k-1]+(*pedidos)[k]-repartidos[k];
+			stock[k]=stock[k-1]+pedidos[k]-repartidos[k-retraso];
 		}
-		if(stock[k]<=0){
+		if((stock[k])<0){
+			J=1000;
 			break;
 		}
-		J = J+precio_med*(*pedidos)[k]+precio_alm*stock[k];
+		J = J+precio_med*pedidos[k]+precio_alm*stock[k];
 	}		
 	return J;
+}
+void inicializa(int * v,int tam){
+	int x;
+	for(x=0; x<tam;x++){
+		v[x]=0;
+	}
 }

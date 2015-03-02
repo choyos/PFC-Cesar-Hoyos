@@ -32,7 +32,6 @@ int main(int argc, char *argv[]){
 	int limite=1;
 	int error=0;
 
-	int diaSemana;
 	int numPedidos;
 	int numDiasNo=argc-3;
 	int diasMes;
@@ -224,7 +223,7 @@ int main(int argc, char *argv[]){
 										error=6;			//error
 									}else{		//otro caso
 										if (aux==1){ //Distinto año
-											printf("Distinto año\n");
+										//	printf("Distinto año\n");
 											if(!((Fecha[n][1]==1)&&(FechaActual[1]==12))){ //no es enero y diciembre
 												error=6;		//error
 											}else{ //Si lo son
@@ -331,7 +330,6 @@ int main(int argc, char *argv[]){
 							matrix[i]=(int *) malloc(TAM*sizeof(int));
 						}
 						
-						int extra;
 						for(i=0;i<limite;i++){
 							for(j=0;j<TAM;j++){
 								matrix[i][j]=matrix1[i][j];
@@ -384,9 +382,8 @@ int main(int argc, char *argv[]){
 							}
 						}
 						filasPedidos=h;
-						printf("Matriz sin semanas repetidas con numero de pedidos solicitados\n");
+					//	printf("Matriz sin semanas repetidas con numero de pedidos solicitados\n");
 					
-						int auxNumPedidos;
 						k=0;
 						for(i=0;i<filasPedidos;i++){
 							guardar=1;
@@ -400,27 +397,26 @@ int main(int argc, char *argv[]){
 								guardar=0;
 							}
 							if(guardar==1){
-								printf("%d->\t",k);
+							//	printf("%d->\t",k);
 								for(j=0;j<TAM;j++){
 									matrix1[k][j]=matrix[i][j];
-									printf("%d",matrix1[k][j]);
+								//	printf("%d",matrix1[k][j]);
 								}
-								printf("\n");
+							//	printf("\n");
 								k++;
 							}
 						}
 						filasPedidos=k;
-						printf("Numero de posibilidades final: %d\n",filasPedidos);
+					//	printf("Numero de posibilidades final: %d\n",filasPedidos);
 						
 						//Una vez obtenidas las posibilidades de salida, obtener combinaciones con cuatro valores ejemplo: 1, 5, 7, 12.
 						int nTamPedidos=4;
 						int vTamPedidos[]={1,5,7,12};
-						int flag=0;
 						int g=0;
 						h=0;
 						n=0;
 						
-						printf("Matriz base de combinaciones\n");
+					//	printf("Matriz base de combinaciones\n");
 						int exp4=1;
 						//Obtenemos primero el numero de combinaciones posibles								
 						for(i=0;i<numPedidos;i++){
@@ -446,12 +442,12 @@ int main(int argc, char *argv[]){
 
 						for(i=0;i<exp4;i++){		//Imprimimos la matriz
 							for(j=0;j<numPedidos;j++){
-								printf("%d",matrixAux1[i][j]);	
+							//	printf("%d",matrixAux1[i][j]);	
 							}
-							printf("\n");
+						//	printf("\n");
 						}
 
-						printf("Numero de posibilidades total: %d\n",filasPedidos*exp4);
+					//	printf("Numero de posibilidades total: %d\n",filasPedidos*exp4);
 						
 						//Matriz definitiva
 						free(matrix);
@@ -493,18 +489,48 @@ int main(int argc, char *argv[]){
 						}
 						printf("Filas de pedido: %d\n",filasPedidos);
 						
-						free(matrix);
-						matrix=NULL;
-						free(matrix1);
-						matrix1=NULL;
-						free(matrixAux1);
-						matrixAux1=NULL;		
+						// Una vez obtenidas todas las posibles combinaciones
+						// para un determinado horizonte, procedemos al cálculo
+						// y consiguiente obtención de los días de pedidos
+						// útiles para el farmaceútico
+						/* evalua(int* pedidos, int horizonte, int retraso, int* stock) */
+						int x;
+						float J;
+						float Jmin = 1000;
+						int *stock;
+						stock=(int*) malloc(TAM*sizeof(int));
+						int *stockOptimo;
+						stockOptimo=(int*) malloc(TAM*sizeof(int));
+						int *vectorOptimo;
+						vectorOptimo=(int*) malloc(TAM*sizeof(int));
+						for(x=0; x<filasPedidos; x++){
+							inicializa(stock, TAM);
+							J = evalua(matrix[x], TAM, 0, stock);
+							printf("\n%d->\tJ = %f\n",x,J);
+							if(J <Jmin){
+								Jmin = J;
+								for(k=0; k<TAM; k++){
+									printf("K: %d, X:%d\n",k,x );
+									vectorOptimo[k]=matrix[x][k];
+									stockOptimo[k]=stock[k];
+								}
+							}
+						}
+						printf("Jmin= %f\nVector Óptimo de pedido:", Jmin);
+						for(x=0;x<TAM; x++){
+							printf("%d",vectorOptimo[x] );
+						}
+						printf("\nStock del pedido óptimo:");
+						for(x=0;x<TAM; x++){
+							printf("%d",stockOptimo[x] );
+						}
+						printf("\n");
 					}
 				}
 			}
 		}
 	}	
-	printf("\n");
+	//printf("\n");
 	
 	
 	return error;
