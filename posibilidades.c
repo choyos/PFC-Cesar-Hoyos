@@ -8,7 +8,6 @@ Nombre: César*/
 #include <stdlib.h>
 #include <string.h>
 #include "typedef.h"
-#include <time.h>
 #include "evalua.h"
 
 #define LUNES 0
@@ -525,6 +524,12 @@ int main(int argc, char *argv[]){
 							printf("%d",stockOptimo[x] );
 						}
 						printf("\n");
+
+						char **FechasOptimas;
+
+						//A partir de obtener los valores optimos de días de pedidos
+						//debemos obtener ahora las fechas con su correspondiente valor
+						FechasOptimas = obtieneFechas(vectorOptimo);
 					}
 				}
 			}
