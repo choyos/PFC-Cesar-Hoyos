@@ -10,4 +10,4 @@ Nombre: César*/
 
 #include "typedef.h"
 
-float evalua(int** pedidos, int horizonte, int retraso);
+float evalua(int** pedidos, int horizonte, int retraso, int ** stock);
