@@ -488,28 +488,29 @@ int main(int argc, char *argv[]){
 							printf("\n");
 						}
 						printf("Filas de pedido: %d\n",filasPedidos);
-						//Liberamos espacio ocupado de forma inutil
-						free(matrix1);
-						matrix1=NULL;
-						free(matrixAux1);
-						matrixAux1=NULL;
+						
 						// Una vez obtenidas todas las posibles combinaciones
 						// para un determinado horizonte, procedemos al cálculo
 						// y consiguiente obtención de los días de pedidos
 						// útiles para el farmaceútico
-						/* evalua(int** pedidos, int horizonte, int retraso, int ** stock) */
+						/* evalua(int* pedidos, int horizonte, int retraso, int* stock) */
 						int x;
-						float J = 1000;
+						float J;
 						float Jmin = 1000;
-						int *stock=(int*) malloc(TAM*sizeof(int));
-						int *stockOptimo=(int*) malloc(TAM*sizeof(int));
-						int *vectorOptimo=(int*) malloc(TAM*sizeof(int));
+						int *stock;
+						stock=(int*) malloc(TAM*sizeof(int));
+						int *stockOptimo;
+						stockOptimo=(int*) malloc(TAM*sizeof(int));
+						int *vectorOptimo;
+						vectorOptimo=(int*) malloc(TAM*sizeof(int));
 						for(x=0; x<filasPedidos; x++){
-							J = evalua(&matrix[x], TAM, 0, &stock);
-							printf("%d->\tJ = %f\n",x,J);
+							inicializa(stock, TAM);
+							J = evalua(matrix[x], TAM, 0, stock);
+							printf("\n%d->\tJ = %f\n",x,J);
 							if(J <Jmin){
 								Jmin = J;
 								for(k=0; k<TAM; k++){
+									printf("K: %d, X:%d\n",k,x );
 									vectorOptimo[k]=matrix[x][k];
 									stockOptimo[k]=stock[k];
 								}
