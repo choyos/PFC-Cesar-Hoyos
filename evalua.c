@@ -61,3 +61,7 @@ void inicializa(int * v,int tam){
 		v[x]=0;
 	}
 }
+
+char ** obtieneFechas(int*v){
+	
+}
