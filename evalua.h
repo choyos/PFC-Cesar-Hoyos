@@ -17,4 +17,4 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock);
 //Función para inicializar los vectores a 0
 void inicializa(int * v,int tam);
 
-char ** obtieneFechas(int*v);
+void obtieneFechasPedidos(int*v, int tam);

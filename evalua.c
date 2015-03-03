@@ -24,7 +24,7 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock){
 	int i;
 	int k;
 	float J = 0;
-	int stockinicial=1;
+	int stockinicial=10;
 	int *repartidos;
 	float precio_med=0.7;
 	float precio_alm=0.2;
@@ -62,6 +62,24 @@ void inicializa(int * v,int tam){
 	}
 }
 
-char ** obtieneFechas(int*v){
+void obtieneFechasPedidos(int*v, int tam){
+	int x;
+	for(x=0; x<tam; x++){
+		if(v[x]!=0){
+			printf("Día: %d",x);
+			printf("\tPedido: %d\n", v[x]);
+			fechaPedido(x);
+		}
+	}
+}
+
+fechaPedido(int dia){
+	//Obtenemos hoy
+	time_t t;
+	struct tm *tm;
+	char fechayhora[100];
 	
+	
+	t=time(NULL);
+	tm=localtime(&t);
 }

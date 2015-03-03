@@ -525,11 +525,11 @@ int main(int argc, char *argv[]){
 						}
 						printf("\n");
 
-						char **FechasOptimas;
+						//char **FechasOptimas;
 
 						//A partir de obtener los valores optimos de días de pedidos
 						//debemos obtener ahora las fechas con su correspondiente valor
-						FechasOptimas = obtieneFechas(vectorOptimo);
+						obtieneFechasPedidos(vectorOptimo, TAM);
 					}
 				}
 			}
