@@ -8,7 +8,10 @@ Nombre: César*/
 #include <stdlib.h>
 #include <string.h>
 #include "typedef.h"
+#include <time.h>
 #include "evalua.h"
+#include "ficheros.h"
+#include "fechas.h"
 
 #define LUNES 0
 #define MARTES 1
@@ -17,9 +20,6 @@ Nombre: César*/
 #define VIERNES 4
 #define SABADO 5
 #define DOMINGO 6
-
-int bisiesto(int year);
-//void obtenerMatrix(int filasMatrix,int TAM,int *matrixResult[][TAM], int *matrix1[filasMatrix][TAM], int numPedidos, int *vTamPedidos[]);
 
 int main(int argc, char *argv[]){
 	
@@ -30,6 +30,9 @@ int main(int argc, char *argv[]){
 	int n;
 	int limite=1;
 	int error=0;
+	MEDICINE medicine;
+	MEDICINE* pMedicine;
+
 
 	int numPedidos;
 	int numDiasNo=argc-3;
@@ -502,10 +505,28 @@ int main(int argc, char *argv[]){
 						stockOptimo=(int*) malloc(TAM*sizeof(int));
 						int *vectorOptimo;
 						vectorOptimo=(int*) malloc(TAM*sizeof(int));
-						
+						medicine.repartidos=(int*) malloc(TAM*sizeof(int));
+						medicine.vTamPedidos= (int*) malloc(TAM*sizeof(int));
+
+						pMedicine = &medicine;
+
+						medicine.stock = 14;
+						pMedicine->stock = 15;
+						printf("%d\n", medicine.stock);
+
+						/*
+							Se realizan las operaciones pertinentes
+							de apertura, lectura y cerrado de fichero
+							con el que intercambiar información con
+							el programa en php para la web.
+							Se almacenan los datos en la estructura 
+							del medicamento.
+						*/
+						ficheros(TAM, pMedicine);
+
 						for(x=0; x<filasPedidos; x++){
 							inicializa(stock, TAM);
-							J = evalua(matrix[x], TAM, 0, stock);
+							J = evalua(matrix[x], TAM, 0, stock, medicine.repartidos);
 						//	printf("\n%d->\tJ = %f\n",x,J);
 							if(J <Jmin){
 								Jmin = J;
@@ -517,11 +538,11 @@ int main(int argc, char *argv[]){
 						}
 						printf("Jmin= %f\nVector Óptimo de pedido:", Jmin);
 						for(x=0;x<TAM; x++){
-							printf("%d",vectorOptimo[x] );
+							printf("%d ",vectorOptimo[x] );
 						}
 						printf("\nStock del pedido óptimo:");
 						for(x=0;x<TAM; x++){
-							printf("%d",stockOptimo[x] );
+							printf("%d ",stockOptimo[x] );
 						}
 						printf("\n");
 
@@ -539,10 +560,4 @@ int main(int argc, char *argv[]){
 	
 	
 	return error;
-}
-
-int bisiesto(int year){
-	int bis;
-	bis=(year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
-	return bis;
 }

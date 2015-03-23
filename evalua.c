@@ -10,6 +10,7 @@ Nombre: César*/
 #include "typedef.h"
 #include <time.h>
 #include "evalua.h"
+#include "fechas.h"
 
 #define LUNES 0
 #define MARTES 1
@@ -19,14 +20,14 @@ Nombre: César*/
 #define SABADO 5
 #define DOMINGO 6
 
-float evalua(int* pedidos, int horizonte, int retraso, int* stock){
+#define TAM_BUF 100
+
+float evalua(int* pedidos, int horizonte, int retraso, int* stock, int* repartidos){
 	//Inicializacion de variables
-	int i;
 	int k;
 	float J = 0;
 	int stockinicial=4;
-	int stock_min=3;
-	int *repartidos;
+	int stock_min=1;
 	int *orders;
 	float precio_med=0.7;
 	float precio_alm=0.2;
@@ -37,19 +38,8 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock){
 
 
 	//Inicializacion de tablas
-	repartidos=(int*) malloc(horizonte*sizeof(int));
 	orders=(int*) malloc(horizonte*sizeof(int));
 
-	/*
-		Inicializa el vector de repartidos a todo 1
-	*/
-	for(i=0;i<horizonte;i++){
-		repartidos[i]=1;
-		if(pedidos[i]!=0){
-			orders[i]=1;
-		}
-	}
-	
 	//Calculo de restricciones
 
 	//Calculo de J y stock
@@ -66,11 +56,14 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock){
 			no puede ser menor a una cantidad dada.
 		*/
 		if((stock[k])<stock_min){
-			J=1000;
+			J=1000*coste_sin_stock;
 			break;
 		}
 		J = J+precio_med*pedidos[k]+(precio_alm+coste_oportunidad)*stock[k]+(coste_pedido+coste_recogida)*orders[k];
-	}		
+	}
+
+	
+	free(orders);		
 	return J;
 }
 
@@ -82,28 +75,3 @@ void inicializa(int * v,int tam){
 	}
 }
 
-void obtieneFechasPedidos(int*v, int tam){
-	int x;
-	for(x=0; x<tam; x++){
-		if(v[x]!=0){
-			printf("Día: %d",x);
-			printf("\tPedido: %d\n", v[x]);
-			fechaPedido(x);
-		}
-	}
-}
-
-
-void fechaPedido(int dia){
-	//Obtenemos hoy
-	time_t t;
-	struct tm *tm;
-	char fechayhora[100];
-	
-	
-	t=time(NULL);
-	tm=localtime(&t);
-
-	//Al día de hoy le añadimos los días en los que se pide
-
-}
