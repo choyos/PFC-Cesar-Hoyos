@@ -24,25 +24,30 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock){
 	int i;
 	int k;
 	float J = 0;
-	int stockinicial=1;
+	int stockinicial=4;
 	int stock_min=3;
 	int *repartidos;
+	int *orders;
 	float precio_med=0.7;
 	float precio_alm=0.2;
 	float coste_pedido= 0.1; //Coste de realizar un pedido
 	float coste_recogida= 0.4; //Coste de almacenar el producto cuando llega
-	float precio_sin_stock=10; //Coste asociado a quedarse sin stock y tener que recurrir a otro hospital
+	float coste_sin_stock=10; //Coste asociado a quedarse sin stock y tener que recurrir a otro hospital
 	float coste_oportunidad=0.9; //Coste asociado a poder haber realizado una inversión con el dinero del stock parado
 
 
 	//Inicializacion de tablas
 	repartidos=(int*) malloc(horizonte*sizeof(int));
+	orders=(int*) malloc(horizonte*sizeof(int));
 
 	/*
 		Inicializa el vector de repartidos a todo 1
 	*/
 	for(i=0;i<horizonte;i++){
 		repartidos[i]=1;
+		if(pedidos[i]!=0){
+			orders[i]=1;
+		}
 	}
 	
 	//Calculo de restricciones
@@ -55,6 +60,7 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock){
 		}else{
 			stock[k]=stock[k-1]+pedidos[k-retraso]-repartidos[k];
 		}
+
 		/* 
 			Tenemos en cuenta la restricción de que el stock 
 			no puede ser menor a una cantidad dada.
@@ -63,7 +69,7 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock){
 			J=1000;
 			break;
 		}
-		J = J+precio_med*pedidos[k]+precio_alm*stock[k];
+		J = J+precio_med*pedidos[k]+(precio_alm+coste_oportunidad)*stock[k]+(coste_pedido+coste_recogida)*orders[k];
 	}		
 	return J;
 }
