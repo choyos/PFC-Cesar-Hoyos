@@ -74,4 +74,3 @@ void inicializa(int * v,int tam){
 		v[x]=0;
 	}
 }
-
