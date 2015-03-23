@@ -18,3 +18,5 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock);
 void inicializa(int * v,int tam);
 
 void obtieneFechasPedidos(int*v, int tam);
+
+void fechaPedido(int dia);

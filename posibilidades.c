@@ -480,9 +480,9 @@ int main(int argc, char *argv[]){
 						
 						printf("Matriz posibilidades:\n");
 						for(i=0;i<filasPedidos;i++){
-							printf("%d->\t",i);
+						//	printf("%d->\t",i);
 							for(j=0;j<TAM;j++){
-								printf("%d",matrix[i][j]);
+						//		printf("%d",matrix[i][j]);
 							}
 							printf("\n");
 						}
@@ -502,14 +502,14 @@ int main(int argc, char *argv[]){
 						stockOptimo=(int*) malloc(TAM*sizeof(int));
 						int *vectorOptimo;
 						vectorOptimo=(int*) malloc(TAM*sizeof(int));
+						
 						for(x=0; x<filasPedidos; x++){
 							inicializa(stock, TAM);
 							J = evalua(matrix[x], TAM, 0, stock);
-							printf("\n%d->\tJ = %f\n",x,J);
+						//	printf("\n%d->\tJ = %f\n",x,J);
 							if(J <Jmin){
 								Jmin = J;
 								for(k=0; k<TAM; k++){
-									printf("K: %d, X:%d\n",k,x );
 									vectorOptimo[k]=matrix[x][k];
 									stockOptimo[k]=stock[k];
 								}

@@ -24,10 +24,16 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock){
 	int i;
 	int k;
 	float J = 0;
-	int stockinicial=10;
+	int stockinicial=1;
+	int stock_min=3;
 	int *repartidos;
 	float precio_med=0.7;
 	float precio_alm=0.2;
+	float coste_pedido= 0.1; //Coste de realizar un pedido
+	float coste_recogida= 0.4; //Coste de almacenar el producto cuando llega
+	float precio_sin_stock=10; //Coste asociado a quedarse sin stock y tener que recurrir a otro hospital
+	float coste_oportunidad=0.9; //Coste asociado a poder haber realizado una inversión con el dinero del stock parado
+
 
 	//Inicializacion de tablas
 	repartidos=(int*) malloc(horizonte*sizeof(int));
@@ -39,15 +45,21 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock){
 		repartidos[i]=1;
 	}
 	
+	//Calculo de restricciones
+
 	//Calculo de J y stock
 	for(k=0;k<horizonte;k++){
 		if(k==0){
 			stock[k]=stockinicial;
 		//	printf("%d\n",*stock[k] );
 		}else{
-			stock[k]=stock[k-1]+pedidos[k]-repartidos[k-retraso];
+			stock[k]=stock[k-1]+pedidos[k-retraso]-repartidos[k];
 		}
-		if((stock[k])<0){
+		/* 
+			Tenemos en cuenta la restricción de que el stock 
+			no puede ser menor a una cantidad dada.
+		*/
+		if((stock[k])<stock_min){
 			J=1000;
 			break;
 		}
@@ -55,6 +67,8 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock){
 	}		
 	return J;
 }
+
+
 void inicializa(int * v,int tam){
 	int x;
 	for(x=0; x<tam;x++){
@@ -73,7 +87,8 @@ void obtieneFechasPedidos(int*v, int tam){
 	}
 }
 
-fechaPedido(int dia){
+
+void fechaPedido(int dia){
 	//Obtenemos hoy
 	time_t t;
 	struct tm *tm;
@@ -82,4 +97,7 @@ fechaPedido(int dia){
 	
 	t=time(NULL);
 	tm=localtime(&t);
+
+	//Al día de hoy le añadimos los días en los que se pide
+
 }
