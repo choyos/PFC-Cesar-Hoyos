@@ -484,7 +484,7 @@ int main(int argc, char *argv[]){
 							for(j=0;j<TAM;j++){
 						//		printf("%d",matrix[i][j]);
 							}
-							printf("\n");
+						//	printf("\n");
 						}
 						printf("Filas de pedido: %d\n",filasPedidos);
 						
