@@ -11,16 +11,18 @@ Nombre: César*/
 a cada uno de los medicamentos. Esta estructura incorpora campos para la
 información que va ligada a cada medicamento y un puntero al siguiente medicamento del mismo laboratorio.*/
 typedef struct NODEMEDICINE{
-	char* med_name; 	/*Nombre del medicamento*/
-	char* code;		/*Codigo*/
 	int stock;		/*Stock actual*/
-	int dosisperpacket;	/*Presentacion: numero de dosis por paquete*/
-	int price;		/*Precio*/
+	float precio_med;		/*Precio de compra del medicamento*/
+	float precio_alm;		/*Precio de almacenamiento del medicamento*/
+	float coste_pedido;		/*Coste de realizar un pedido*/
+	float coste_recogida;	/*Coste de recibir un pedido*/
+	float coste_sin_stock;	/*Coste por quedarse sin stock*/
+	float coste_oportunidad;/*Coste por tener en stock*/
+	int* repartidos; 	/*Estimacion de repartidos*/
 	int maxStock;		/*Stock maximo almacenable*/
 	int minStock;		/*Stock minimo para que no haya desabastecimiento*/
-	char* lab_name;		/*Nombre del laboratorio que lo produce*/
-	int* historical;	/*Historico*/
-	struct NODEMEDICINE * sig; /*Puntero al siguiente medicamento. Esto facilitará más adelante la posibilidad de crear una lista de medicamentos para trabajar con ellos y clasificarlos*/
+	int nTamPedidos;	/*Numero de posibilidades de pedidos*/
+	int* vTamPedidos;	/*Diferentes posibilidades de pedidos*/
 }MEDICINE;
 
 /* Estructura para el manejo de información ligada a cada una los laboratorios. 
