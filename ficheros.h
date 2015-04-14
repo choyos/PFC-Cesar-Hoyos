@@ -12,4 +12,4 @@ Nombre: César*/
 #include <time.h>
 
 //Función que evalua cada posibilidad para devolver un coste total de medicamentos
-void ficheros(int horizonte, MEDICINE* med);
+int ficheros(int horizonte, MEDICINE* med);

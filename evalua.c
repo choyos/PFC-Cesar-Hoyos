@@ -11,6 +11,7 @@ Nombre: César*/
 #include <time.h>
 #include "evalua.h"
 #include "fechas.h"
+#include "matrices.h"
 
 #define LUNES 0
 #define MARTES 1
@@ -22,44 +23,42 @@ Nombre: César*/
 
 #define TAM_BUF 100
 
-float evalua(int* pedidos, int horizonte, int retraso, int* stock, int* repartidos){
+float evalua(int* pedidos, int horizonte, int retraso, int* stock, MEDICINE *med){
 	//Inicializacion de variables
 	int k;
 	float J = 0;
-	int stockinicial=4;
-	int stock_min=1;
 	int *orders;
-	float precio_med=0.7;
-	float precio_alm=0.2;
-	float coste_pedido= 0.1; //Coste de realizar un pedido
-	float coste_recogida= 0.4; //Coste de almacenar el producto cuando llega
-	float coste_sin_stock=10; //Coste asociado a quedarse sin stock y tener que recurrir a otro hospital
-	float coste_oportunidad=0.9; //Coste asociado a poder haber realizado una inversión con el dinero del stock parado
-
 
 	//Inicializacion de tablas
-	orders=(int*) malloc(horizonte*sizeof(int));
+	inicializaVector(horizonte, &orders);
 
-	//Calculo de restricciones
+	/*Vemos cuando se realizan o no pedidos*/
+	for(k=0; k<horizonte; k++){
+		if(pedidos[k]==0){
+			orders[k] = 0;
+		}else{
+			orders[k] = 1;
+		}
+	}
 
 	//Calculo de J y stock
 	for(k=0;k<horizonte;k++){
 		if(k==0){
-			stock[k]=stockinicial;
+			stock[k]=med->stock;
 		//	printf("%d\n",*stock[k] );
 		}else{
-			stock[k]=stock[k-1]+pedidos[k-retraso]-repartidos[k];
+			stock[k]=stock[k-1]+pedidos[k-retraso]-med->repartidos[k];
 		}
 
 		/* 
 			Tenemos en cuenta la restricción de que el stock 
 			no puede ser menor a una cantidad dada.
 		*/
-		if((stock[k])<stock_min){
-			J=1000*coste_sin_stock;
+		if((stock[k])<med->minStock){
+			J=1000*med->coste_sin_stock;
 			break;
 		}
-		J = J+precio_med*pedidos[k]+(precio_alm+coste_oportunidad)*stock[k]+(coste_pedido+coste_recogida)*orders[k];
+		J = J+med->precio_med*pedidos[k]+(med->precio_alm+med->coste_oportunidad)*stock[k]+(med->coste_pedido+med->coste_recogida)*orders[k];
 	}
 
 	

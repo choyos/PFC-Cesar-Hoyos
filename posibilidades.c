@@ -4,14 +4,16 @@
 /*Apellidos: Hoyos Martín
 Nombre: César*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "typedef.h"
-#include <time.h>
 #include "evalua.h"
 #include "ficheros.h"
 #include "fechas.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include "typedef.h"
+#include "matrices.h"
+
 
 #define LUNES 0
 #define MARTES 1
@@ -22,16 +24,19 @@ Nombre: César*/
 #define DOMINGO 6
 
 int main(int argc, char *argv[]){
+	printf("\n");
+	clock_t start = clock();  
 	
-	int TAM;
-	int j;
-	int i=0;
-	int k;
-	int n;
-	int limite=1;
-	int error=0;
-	MEDICINE medicine;
-	MEDICINE* pMedicine;
+    
+	/*Inicialización de variables para la ejecución del programa*/
+	int TAM;	//Dias en el horizonte
+	int j;		//Auxiliar para recorrido de matrices
+	int i=0;	//Auxiliar para recorrido de matrices
+	int k;		//Auxiliar para recalculo de matrices
+	int n;		//Auxiliar para recalculo y traspaso de matrices
+	int limite=1;	//Limite para el calculo del tope de posibilidades
+	int error=0;	//Variable de error
+	MEDICINE medicine;	//Estructura para mantener la información del medicamento
 
 
 	int numPedidos;
@@ -39,7 +44,8 @@ int main(int argc, char *argv[]){
 	int diasMes;
 	int aux=0;
 	
-	if (argc<3){
+	/*Comprobamos que el numero de argumentos recibidos es el correto*/
+	if (argc<3){	
 		error=1;
 		printf("ERROR1:\nNumero de argumentos de la funcion incorrectos\n");
 		printf("La llamada a la funcion debe ser \"%s\" \"numero de dias en el horizonte\" \"numero de pedidos en el horizonte\" \"OPCIONAL:fecha de dias de no pedido\":\n",argv[0]);
@@ -50,6 +56,7 @@ int main(int argc, char *argv[]){
 				error=2;
 			}
 		}
+		/*Comprobamos que el numero de días en el horizonte tiene un formato correcto*/
 		if(error!=0){
 			printf("ERROR2:\nValor de numero de dias en el horizonte incorrecto. Introduzca valor numerico\n");
 		}else{
@@ -60,12 +67,13 @@ int main(int argc, char *argv[]){
 					error=3;
 				}
 			}
+			/*Comprobamos que el numero de dias de pedido tiene un formato correcto*/
 			if(error!=0){
 				printf("ERROR3:\nValor de numero de pedidos en el horizonte incorrecto. Introduzca valor numerico\n");
 			}else{
 						
 				numPedidos=atoi(argv[2]);
-				
+				/*Comprobamos que el numero de días de pedido no sea mayor que el numero de dias posible*/
 				if(numPedidos>TAM){
 					error=4;
 					printf("ERROR4:\nNumero de dias de pedido mayor que dias en el horizonte\n");
@@ -75,41 +83,28 @@ int main(int argc, char *argv[]){
 						for(i=0;i<TAM;i++){
 							diasNO[i]=0;
 						}
+					
+					/*Comprobamos que se han introducido fechas sin error:*/
 					if(argc>3){
 						
-						
-	
-						time_t t;
-						struct tm *tm;
-						char fechayhora[100];
-						
-						
-						t=time(NULL);
-						tm=localtime(&t);
-						strftime(fechayhora, 100, "%d/%m/%Y", tm);
-						j=0;
-						k=0;
-						char auxFecha[5];
-						int FechaActual[3];
-						for(i=0;fechayhora[i]!='\0';i++){
-							auxFecha[k]=fechayhora[i];
-							k++;
-							if(fechayhora[i]=='/'){
-								auxFecha[k]='\0';
-								FechaActual[j]=atoi(auxFecha);
-								j++;
-								k=0;
-							}
-						}
-						auxFecha[k]='\0';
-						FechaActual[j]=atoi(auxFecha);
-						j++;
+						int *FechaActual;
+						inicializaVector(3, &FechaActual);
+
+						fechaHoy(FechaActual);
 						//Fecha introducida por linea de comandos
 						k=0;
-						int Fecha[numDiasNo][3];
-						for(n=0;n<numDiasNo;n++){
+/*----------------------Inicializamos la matriz de fechas para trabajar---------
+------------------------más comodamente con ellas al ser enteros--------------*/
+						char auxFecha[5];
+						int ** Fecha;
+						inicializaMatriz(numDiasNo, 3, &Fecha);
+						//Realizamos un bucle para recorrer todas las fechas introducidas
+						//por la línea de comandos
+						for(n=0;n<numDiasNo;n++){	
 							j=0;						
 							k=0;	
+							//Y otro para ir separando día, mes y año de la fecha
+							//para facilitar el trabajo con las mismas
 							for(i=0;argv[n+3][i]!='\0';i++){
 								if(argv[n+3][i]=='/'){
 									auxFecha[k]='\0';
@@ -125,7 +120,8 @@ int main(int argc, char *argv[]){
 							}
 							auxFecha[k]='\0';
 							Fecha[n][j]=atoi(auxFecha);
-						}	
+						}
+/*----------------------Comprobamos si las fechas están en el horizonte pedido---*/							
 						for(n=0;n<numDiasNo;n++){
 							if(Fecha[n][1]>12||Fecha[n][1]<1){
 								error=6;
@@ -133,6 +129,7 @@ int main(int argc, char *argv[]){
 								error=6;
 							}switch (Fecha[n][1]){
 								case 1:
+									diasMes = 31;
 									if(Fecha[n][0]>31){
 										error=6;
 									}
@@ -214,17 +211,22 @@ int main(int argc, char *argv[]){
 								default:
 									error=6;
 							}
-							if(FechaActual[2]>Fecha[n][2]){ //Si el año es menor
+							//Si el año es menor que el actual
+							if(FechaActual[2]>Fecha[n][2]){ 
 								error=6;					//error
 							}else{
 								aux=Fecha[n][2]-FechaActual[2];	
-								if(aux>1){	//si la diferencia de años es mayor que uno
-									error=6;//error
+								//si la diferencia de años es mayor que uno
+								if(aux>1){	
+									//error: estará fuera del horizonte
+									error=6;
 								}else{
-									if(FechaActual[1]>Fecha[n][1]){ //si el mes es pasado
+									//si el mes es pasado al actual
+									if(FechaActual[1]>Fecha[n][1]){ 
 										error=6;			//error
 									}else{		//otro caso
-										if (aux==1){ //Distinto año
+										//Distinto año
+										if (aux==1){ 
 										//	printf("Distinto año\n");
 											if(!((Fecha[n][1]==1)&&(FechaActual[1]==12))){ //no es enero y diciembre
 												error=6;		//error
@@ -271,14 +273,19 @@ int main(int argc, char *argv[]){
 							}
 						}
 					}
+					/*Comprobamos si es error sintactico*/
 					if (error==5){
 						printf("Error=%d\n",error);
 						printf("ERROR5:\nDias incorrectos. Utilizar la siguiente notacion:\n");
 						printf("dd/mm/yyyy\n");
+					/*Comprobamos si la fecha está dentro de fechas posibles*/
 					}else if(error==6){
 						printf("ERROR6:\nFecha incorrecta fuera del horizonte\n");
 					}else{
 
+/*--------------------------------------------------------------------------
+------------------------Calculo de primera matriz---------------------------
+--------------------------------------------------------------------------*/
 						for(j=0;j<TAM;j++){
 							limite=limite*2;
 						}
@@ -289,10 +296,7 @@ int main(int argc, char *argv[]){
 						//Reserva de memoria para matrix1
 						int **matrix1;
 						
-						matrix1=(int **) malloc(limite*sizeof(int*));
-						for(i=0;i<limite;i++){
-							matrix1[i]=(int *) malloc(TAM*sizeof(int));
-						}
+						inicializaMatriz(limite, TAM, &matrix1);
 
 						//Inicializamos el primer vector a 0
 						for (j=0;j<TAM;j++){
@@ -324,13 +328,11 @@ int main(int argc, char *argv[]){
 								}
 							}
 						}
-						//Matriz de pedidos	quitando dias NO posibles						
+/*---------------------------------------------------------------------------
+------------------------Matriz de pedidos quitando dias NO posibles----------
+---------------------------------------------------------------------------*/
 						int **matrix;
-						
-						matrix=(int **) malloc(limite*sizeof(int*));
-						for(i=0;i<limite;i++){
-							matrix[i]=(int *) malloc(TAM*sizeof(int));
-						}
+						inicializaMatriz(limite, TAM, &matrix);
 						
 						for(i=0;i<limite;i++){
 							for(j=0;j<TAM;j++){
@@ -384,7 +386,10 @@ int main(int argc, char *argv[]){
 							}
 						}
 						filasPedidos=h;
-					//	printf("Matriz sin semanas repetidas con numero de pedidos solicitados\n");
+
+/*---------------------------------------------------------------------------------------
+------------------------Matriz sin semanas repetidas con numero de pedidos solicitados---
+---------------------------------------------------------------------------------------*/
 					
 						k=0;
 						for(i=0;i<filasPedidos;i++){
@@ -402,162 +407,159 @@ int main(int argc, char *argv[]){
 							//	printf("%d->\t",k);
 								for(j=0;j<TAM;j++){
 									matrix1[k][j]=matrix[i][j];
-								//	printf("%d",matrix1[k][j]);
 								}
-							//	printf("\n");
 								k++;
 							}
 						}
 						filasPedidos=k;
-					//	printf("Numero de posibilidades final: %d\n",filasPedidos);
+					//	imprimeMatriz(filasPedidos, TAM, matrix1);
 						
-						//Una vez obtenidas las posibilidades de salida, obtener combinaciones con cuatro valores ejemplo: 1, 5, 7, 12.
-						int nTamPedidos=4;
-						int vTamPedidos[]={1,5,7,12};
-						int g=0;
-						h=0;
-						n=0;
-						
-					//	printf("Matriz base de combinaciones\n");
-						int exp4=1;
-						//Obtenemos primero el numero de combinaciones posibles								
-						for(i=0;i<numPedidos;i++){
-							exp4=exp4*nTamPedidos;
-						}
-						
-						int divisor = exp4/nTamPedidos; //Variable auxiliar para acceder al vector de la forma adecuada
-						//Matriz de combinaciones
-						int **matrixAux1;
-						
-						matrixAux1=(int **) malloc(exp4*sizeof(int*));
-						for(i=0;i<exp4;i++){
-							matrixAux1[i]=(int *) malloc(numPedidos*sizeof(int));
-						}
-						
-						
-						for(j=0;j<numPedidos;j++){	//Luego por filas
-							for(i=0;i<exp4;i++){	//Primero por columnas
-								matrixAux1[i][j]=vTamPedidos[(i/divisor)%nTamPedidos];
-							}
-							divisor=divisor/nTamPedidos;	//Disminuimos la auxiliar para acceder a la posicion correcta
-						}
-
-						for(i=0;i<exp4;i++){		//Imprimimos la matriz
-							for(j=0;j<numPedidos;j++){
-							//	printf("%d",matrixAux1[i][j]);	
-							}
-						//	printf("\n");
-						}
-
-					//	printf("Numero de posibilidades total: %d\n",filasPedidos*exp4);
-						
-						//Matriz definitiva
-						free(matrix);
-						matrix=NULL;
-						
-						matrix=(int **) malloc(filasPedidos*exp4*sizeof(int*));
-						for(i=0;i<filasPedidos*exp4;i++){
-							matrix[i]=(int *) malloc(TAM*sizeof(int));
-						}
-						
-						
-						// Bucles para la obtencion de la matriz definitiva
-						for(i=0;i<filasPedidos;i++){	// Por cada fila de la matriz de dias de pedidos y no
-							for(k=0;k<exp4;k++){		// Accedemos todas las veces de las combinaciones posibles
-								for(j=0;j<TAM;j++){		// En el recorrido
-									if(matrix1[i][j]==1){	// Si es 1 se cambia por el valor correspondiente
-										matrix[n][j]=matrix1[i][j]*matrixAux1[k][g];
-										g++;
-										
-									}else{	//Si es 0 se deja igual
-										matrix[n][j]=matrix1[i][j];
-									}							
-								}
-								g=0;	//Al finalizar cada pasada reiniciamos el contador g a 0
-								n++;	//Y pasamos a rellenar la siguiente fila
-							}
-						}
-						
-						filasPedidos=n;		
-						// Imprimimos por pantalla todas las posibilidades				
-						
-						printf("Matriz posibilidades:\n");
-						for(i=0;i<filasPedidos;i++){
-						//	printf("%d->\t",i);
-							for(j=0;j<TAM;j++){
-						//		printf("%d",matrix[i][j]);
-							}
-						//	printf("\n");
-						}
-						printf("Filas de pedido: %d\n",filasPedidos);
-						
-						// Una vez obtenidas todas las posibles combinaciones
-						// para un determinado horizonte, procedemos al cálculo
-						// y consiguiente obtención de los días de pedidos
-						// útiles para el farmaceútico
-						/* evalua(int* pedidos, int horizonte, int retraso, int* stock) */
-						int x;
-						float J;
-						float Jmin = 1000;
-						int *stock;
-						stock=(int*) malloc(TAM*sizeof(int));
-						int *stockOptimo;
-						stockOptimo=(int*) malloc(TAM*sizeof(int));
-						int *vectorOptimo;
-						vectorOptimo=(int*) malloc(TAM*sizeof(int));
-						medicine.repartidos=(int*) malloc(TAM*sizeof(int));
-						medicine.vTamPedidos= (int*) malloc(TAM*sizeof(int));
-
-						pMedicine = &medicine;
-
-						medicine.stock = 14;
-						pMedicine->stock = 15;
-						printf("%d\n", medicine.stock);
+/*----------------------------------------------------------------------------------------
+------------------------Una vez obtenidas las posibilidades de salida---------------------
+------------------------procedemos a la lectura del fichero          ---------------------
+----------------------------------------------------------------------------------------*/
 
 						/*
-							Se realizan las operaciones pertinentes
-							de apertura, lectura y cerrado de fichero
-							con el que intercambiar información con
-							el programa en php para la web.
-							Se almacenan los datos en la estructura 
-							del medicamento.
+								Se realizan las operaciones pertinentes
+								de apertura, lectura y cerrado de fichero
+								con el que intercambiar información con
+								el programa en php para la web.
+								Se almacenan los datos en la estructura 
+								del medicamento.
 						*/
-						ficheros(TAM, pMedicine);
+						if(ficheros(TAM, &medicine)==1){
+							printf("ERROR7: Lectura de fichero no realizada\n");
+							error = 7;
+						}else{
+							
+/*----------------------------------------------------------------------------------------
+------------------------Procedemos al calculo de la matriz con las posibilidades----------
+------------------------de pedido                                               ----------
+----------------------------------------------------------------------------------------*/
+							//Inicializamos variables auxiliares utiles para la obtención 
+							//de las matrices pertinentes
+							int g=0;
+							h=0;
+							n=0;
+							
+							//Matriz base de combinaciones
+							int exp4=1;
+							//Obtenemos primero el numero de combinaciones posibles								
+							for(i=0;i<numPedidos;i++){
+								exp4=exp4*medicine.nTamPedidos;
+							}
+							
+							int divisor = exp4/medicine.nTamPedidos; //Variable auxiliar para acceder al vector de la forma adecuada
+							//Matriz de combinaciones
+							int **matrixAux1;
+							
+							inicializaMatriz(exp4, numPedidos, &matrixAux1);
+							
+							for(j=0;j<numPedidos;j++){	//Luego por filas
+								for(i=0;i<exp4;i++){	//Primero por columnas
+									matrixAux1[i][j]=medicine.vTamPedidos[(i/divisor)%medicine.nTamPedidos];
+								}
+								divisor=divisor/medicine.nTamPedidos;	//Disminuimos la auxiliar para acceder a la posicion correcta
+							}
 
-						for(x=0; x<filasPedidos; x++){
-							inicializa(stock, TAM);
-							J = evalua(matrix[x], TAM, 0, stock, medicine.repartidos);
-						//	printf("\n%d->\tJ = %f\n",x,J);
-							if(J <Jmin){
-								Jmin = J;
-								for(k=0; k<TAM; k++){
-									vectorOptimo[k]=matrix[x][k];
-									stockOptimo[k]=stock[k];
+							//Imprimimos la matriz por pantalla
+							//imprimeMatriz(exp4, numPedidos, matrixAux1);
+
+						//	printf("Numero de posibilidades total: %d\n",filasPedidos*exp4);
+							
+							//Matriz definitiva
+							free(matrix);
+							matrix=NULL;
+							
+							inicializaMatriz(filasPedidos*exp4, TAM, &matrix);
+							
+							// Bucles para la obtencion de la matriz definitiva
+							for(i=0;i<filasPedidos;i++){	// Por cada fila de la matriz de dias de pedidos y no
+								for(k=0;k<exp4;k++){		// Accedemos todas las veces de las combinaciones posibles
+									for(j=0;j<TAM;j++){		// En el recorrido
+										if(matrix1[i][j]==1){	// Si es 1 se cambia por el valor correspondiente
+											matrix[n][j]=matrix1[i][j]*matrixAux1[k][g];
+											g++;
+											
+										}else{	//Si es 0 se deja igual
+											matrix[n][j]=matrix1[i][j];
+										}							
+									}
+									g=0;	//Al finalizar cada pasada reiniciamos el contador g a 0
+									n++;	//Y pasamos a rellenar la siguiente fila
+								}
+							}
+							
+							filasPedidos=n;		
+							// Imprimimos por pantalla todas las posibilidades				
+							
+						/*	printf("Matriz posibilidades:\n");
+							imprimeMatriz(filasPedidos, TAM, matrix); */
+														
+							if(filasPedidos==0){
+								printf("ERROR8: No se puede obtener ninguna posibilidad con los datos introducidos\n");
+								error = 8;
+							}else{
+								// Una vez obtenidas todas las posibles combinaciones
+								// para un determinado horizonte, procedemos al cálculo
+								// y consiguiente obtención de los días de pedidos
+								// útiles para el farmaceútico
+								/* evalua(int* pedidos, int horizonte, int retraso, int* stock) */
+								int x;
+								float J;
+								float Jmin = 1000;
+								int *stock;
+								inicializaVector(TAM, &stock);
+								int *stockOptimo;
+								inicializaVector(TAM, &stockOptimo);
+								int *vectorOptimo;
+								inicializaVector(TAM, &vectorOptimo);
+
+								for(x=0; x<filasPedidos; x++){
+									inicializa(stock, TAM);
+									J = evalua(matrix[x], TAM, 0, stock, &medicine);
+								//	printf("\n%d->\tJ = %f\n",x,J);
+									if(J <Jmin){
+										Jmin = J;
+										for(k=0; k<TAM; k++){
+											vectorOptimo[k]=matrix[x][k];
+											stockOptimo[k]=stock[k];
+										}
+									}
+								}
+								if(Jmin==1000){
+									printf("ERROR9: No existe ninguna posibilidad válida para nuestro problema\n");
+									error = 9;
+								}else{
+									printf("Jmin= %f\nVector Óptimo de pedido:", Jmin);
+									for(x=0;x<TAM; x++){
+										printf("%d ",vectorOptimo[x] );
+									}
+									printf("\nStock del pedido óptimo:");
+									for(x=0;x<TAM; x++){
+										printf("%d ",stockOptimo[x] );
+									}
+									printf("\n");
+
+									//char **FechasOptimas;
+									int ** FechasPedido;
+									inicializaMatriz(numPedidos, 3, &FechasPedido);
+									//A partir de obtener los valores optimos de días de pedidos
+									//debemos obtener ahora las fechas con su correspondiente valor
+									printf("\n\n");
+									printf("===============\n===Resultado===\n===============\n\n");
+
+									obtieneFechasPedidos(vectorOptimo, TAM, FechasPedido);
 								}
 							}
 						}
-						printf("Jmin= %f\nVector Óptimo de pedido:", Jmin);
-						for(x=0;x<TAM; x++){
-							printf("%d ",vectorOptimo[x] );
-						}
-						printf("\nStock del pedido óptimo:");
-						for(x=0;x<TAM; x++){
-							printf("%d ",stockOptimo[x] );
-						}
-						printf("\n");
-
-						//char **FechasOptimas;
-
-						//A partir de obtener los valores optimos de días de pedidos
-						//debemos obtener ahora las fechas con su correspondiente valor
-						obtieneFechasPedidos(vectorOptimo, TAM);
 					}
 				}
 			}
 		}
 	}	
-	//printf("\n");
-	
+	printf("\n");
+	printf("Tiempo transcurrido: %f\n\n", ((double)clock() - start) / CLOCKS_PER_SEC);	
 	
 	return error;
 }

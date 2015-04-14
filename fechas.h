@@ -18,7 +18,10 @@ void compruebaFecha();
 int bisiesto(int year);
 
 //Funcion que obtiene las fechas de los dias de pedido optimo
-void obtieneFechasPedidos(int*v, int tam);
+void obtieneFechasPedidos(int*v, int tam, int ** FechasPedido);
 
 //Funcion que devuelve la fecha formateada del dia
-void fechaPedido(int dia);
+void fechaPedido(int dia, int * fecha);
+
+//Funcion que recibe un vector y devuelve los campos del mismo rellenos con {día, mes, año} en formato entero.
+void fechaHoy(int * fechaActual);
