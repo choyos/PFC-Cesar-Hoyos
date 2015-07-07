@@ -27,7 +27,7 @@ int ficheros(int horizonte, MEDICINE* med){
 	int i;
 	int error = 0;	//Variable de error
 
-	fp = fopen ( "datos1.pha" , "r" );
+	fp = fopen ( "datos.pha" , "r" );
 	if(fp == NULL){	//Caso de no apertura pasar el error 
 		error = 1;
 	}else{	//Caso de apertura

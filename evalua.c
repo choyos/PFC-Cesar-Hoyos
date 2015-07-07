@@ -28,6 +28,7 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock, MEDICINE *med
 	int k;
 	float J = 0;
 	int *orders;
+	int noStock;
 
 	//Inicializacion de tablas
 	inicializaVector(horizonte, &orders);
@@ -55,10 +56,11 @@ float evalua(int* pedidos, int horizonte, int retraso, int* stock, MEDICINE *med
 			no puede ser menor a una cantidad dada.
 		*/
 		if((stock[k])<med->minStock){
-			J=1000*med->coste_sin_stock;
-			break;
+			noStock = 1;
+		}else{
+			noStock = 0;
 		}
-		J = J+med->precio_med*pedidos[k]+(med->precio_alm+med->coste_oportunidad)*stock[k]+(med->coste_pedido+med->coste_recogida)*orders[k];
+		J = J+med->precio_med*pedidos[k]+(med->precio_alm+med->coste_oportunidad)*stock[k]+(med->coste_pedido+med->coste_recogida)*orders[k]+noStock*med->coste_sin_stock;
 	}
 
 	

@@ -328,7 +328,7 @@ int main(int argc, char *argv[]){
 								}
 							}
 						}
-						imprimeMatriz(limite,TAM,matrix1);
+					//	imprimeMatriz(limite,TAM,matrix1);
 /*---------------------------------------------------------------------------
 ------------------------Matriz de pedidos quitando dias NO posibles----------
 ---------------------------------------------------------------------------*/
@@ -364,7 +364,7 @@ int main(int argc, char *argv[]){
 								k++;
 							}
 						}
-						
+					//	imprimeMatriz(k, TAM, matrix1);
 /*---------------------------------------------------------------------------
 ------------------------Matriz de pedidos quitando filas iguales-------------
 ---------------------------------------------------------------------------*/
@@ -393,6 +393,7 @@ int main(int argc, char *argv[]){
 								h++;
 							}
 						}
+					//	imprimeMatriz(h,TAM,matrix);
 						filasPedidos=h;
 
 /*---------------------------------------------------------------------------------------
@@ -471,7 +472,7 @@ int main(int argc, char *argv[]){
 							}
 
 							//Imprimimos la matriz por pantalla
-							//imprimeMatriz(exp4, numPedidos, matrixAux1);
+							imprimeMatriz(exp4, numPedidos, matrixAux1);
 
 						//	printf("Numero de posibilidades total: %d\n",filasPedidos*exp4);
 							
@@ -515,7 +516,7 @@ int main(int argc, char *argv[]){
 								/* evalua(int* pedidos, int horizonte, int retraso, int* stock) */
 								int x;
 								float J;
-								float Jmin = 1000;
+								float Jmin;
 								int *stock;
 								inicializaVector(TAM, &stock);
 								int *stockOptimo;
@@ -527,6 +528,13 @@ int main(int argc, char *argv[]){
 									inicializa(stock, TAM);
 									J = evalua(matrix[x], TAM, 0, stock, &medicine);
 								//	printf("\n%d->\tJ = %f\n",x,J);
+									if(x==0){
+										Jmin = J;
+										for(k=0; k<TAM; k++){
+											vectorOptimo[k]=matrix[x][k];
+											stockOptimo[k]=stock[k];
+										}
+									}
 									if(J <Jmin){
 										Jmin = J;
 										for(k=0; k<TAM; k++){
@@ -535,31 +543,26 @@ int main(int argc, char *argv[]){
 										}
 									}
 								}
-								if(Jmin==1000){
-									printf("ERROR9: No existe ninguna posibilidad válida para nuestro problema\n");
-									error = -9;
-								}else{
-									printf("Jmin= %f\nVector Óptimo de pedido:", Jmin);
-									for(x=0;x<TAM; x++){
-										printf("%d ",vectorOptimo[x] );
-									}
-									printf("\nStock del pedido óptimo:");
-									for(x=0;x<TAM; x++){
-										printf("%d ",stockOptimo[x] );
-									}
-									printf("\n");
-
-									//char **FechasOptimas;
-									int ** FechasPedido;
-									inicializaMatriz(numPedidos, 3, &FechasPedido);
-									//A partir de obtener los valores optimos de días de pedidos
-									//debemos obtener ahora las fechas con su correspondiente valor
-									printf("\n\n");
-									printf("===============\n===Resultado===\n===============\n\n");
-
-									obtieneFechasPedidos(vectorOptimo, TAM, FechasPedido);
-									error = Jmin;
+								printf("Jmin= %f\nVector Óptimo de pedido:", Jmin);
+								for(x=0;x<TAM; x++){
+									printf("%d ",vectorOptimo[x] );
 								}
+								printf("\nStock del pedido óptimo:");
+								for(x=0;x<TAM; x++){
+									printf("%d ",stockOptimo[x] );
+								}
+								printf("\n");
+
+								//char **FechasOptimas;
+								int ** FechasPedido;
+								inicializaMatriz(numPedidos, 3, &FechasPedido);
+								//A partir de obtener los valores optimos de días de pedidos
+								//debemos obtener ahora las fechas con su correspondiente valor
+								printf("\n\n");
+								printf("===============\n===Resultado===\n===============\n\n");
+
+								obtieneFechasPedidos(vectorOptimo, TAM, FechasPedido);
+								error = Jmin;
 							}
 						}
 					}
