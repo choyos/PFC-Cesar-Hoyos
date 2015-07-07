@@ -51,13 +51,13 @@ int ficheros(int horizonte, MEDICINE* med){
 		for(i=0; i<horizonte;i++){ 
 			fscanf(fp, "%d", med->repartidos+i );
 		}
-		/*9- Lectura del maximo stock almacenable*/
+		/*9+horizonte- Lectura del maximo stock almacenable*/
 		fscanf(fp, "%d", &(med->maxStock));
-		/*10- Lectura del minimo stock almacenable*/
+		/*10+horizonte- Lectura del minimo stock almacenable*/
 		fscanf(fp, "%d", &(med->minStock));
-		/*11- Lectura del numero de posibles pedidos*/
+		/*11+horizonte- Lectura del numero de posibles pedidos*/
 		fscanf(fp, "%d", &(med->nTamPedidos));
-		/*12- Lectura del vector de posibles pedidos*/
+		/*12+horizonte- Lectura del vector de posibles pedidos*/
 		inicializaVector(med->nTamPedidos, &(med->vTamPedidos));
 		for(i=0; i<med->nTamPedidos;i++){ 
 			fscanf(fp, "%d", med->vTamPedidos+i );

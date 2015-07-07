@@ -46,14 +46,14 @@ int main(int argc, char *argv[]){
 	
 	/*Comprobamos que el numero de argumentos recibidos es el correto*/
 	if (argc<3){	
-		error=1;
+		error=-1;
 		printf("ERROR1:\nNumero de argumentos de la funcion incorrectos\n");
 		printf("La llamada a la funcion debe ser \"%s\" \"numero de dias en el horizonte\" \"numero de pedidos en el horizonte\" \"OPCIONAL:fecha de dias de no pedido\":\n",argv[0]);
 		printf("dd/mm/aaaa\n");
 	}else{
 		for(i=0;argv[1][i]!='\0';i++){
 			if(argv[1][i]<'0'||argv[1][i]>'9'){
-				error=2;
+				error=-2;
 			}
 		}
 		/*Comprobamos que el numero de días en el horizonte tiene un formato correcto*/
@@ -64,7 +64,7 @@ int main(int argc, char *argv[]){
 			TAM=atoi(argv[1]);
 			for(i=0;argv[2][i]!='\0';i++){
 				if(argv[2][i]<'0'||argv[2][i]>'9'){
-					error=3;
+					error=-3;
 				}
 			}
 			/*Comprobamos que el numero de dias de pedido tiene un formato correcto*/
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
 				numPedidos=atoi(argv[2]);
 				/*Comprobamos que el numero de días de pedido no sea mayor que el numero de dias posible*/
 				if(numPedidos>TAM){
-					error=4;
+					error=-4;
 					printf("ERROR4:\nNumero de dias de pedido mayor que dias en el horizonte\n");
 				}else{
 				//Inicializar vector diasNO
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]){
 									j++;
 									k=0;
 								}else if(argv[n+3][i]<'0'||argv[n+3][i]>'9'){
-									error=5;
+									error=-5;
 								}else{
 									auxFecha[k]=argv[n+3][i];
 									k++;
@@ -124,116 +124,116 @@ int main(int argc, char *argv[]){
 /*----------------------Comprobamos si las fechas están en el horizonte pedido---*/							
 						for(n=0;n<numDiasNo;n++){
 							if(Fecha[n][1]>12||Fecha[n][1]<1){
-								error=6;
+								error=-6;
 							}else if(Fecha[n][0]<1){
-								error=6;
+								error=-6;
 							}switch (Fecha[n][1]){
 								case 1:
 									diasMes = 31;
 									if(Fecha[n][0]>31){
-										error=6;
+										error=-6;
 									}
 									break;
 								case 2:
 									if(bisiesto(Fecha[n][2])==1){
 										diasMes=29;
 										if(Fecha[n][0]>29){
-											error=6;
+											error=-6;
 										}
 									}
 									else{
 										diasMes=28;
 										if(Fecha[n][0]>28){
-											error=6;
+											error=-6;
 										}
 									}
 									break;
 								case 3:
 									diasMes=31;
 									if(Fecha[n][0]>31){
-										error=6;
+										error=-6;
 									}
 									break;
 								case 4:
 									diasMes=30;
 									if(Fecha[n][0]>30){
-										error=6;
+										error=-6;
 									}
 									break;
 								case 5:
 									diasMes=31;
 									if(Fecha[n][0]>31){
-										error=6;
+										error=-6;
 									}
 									break;
 								case 6:
 									diasMes=30;
 									if(Fecha[n][0]>30){
-										error=6;
+										error=-6;
 									}
 									break;
 								case 7:
 									diasMes=31;
 									if(Fecha[n][0]>31){
-										error=6;
+										error=-6;
 									}
 									break;
 								case 8:
 									diasMes=31;
 									if(Fecha[n][0]>31){
-										error=6;
+										error=-6;
 									}
 									break;
 								case 9:
 									diasMes=30;
 									if(Fecha[n][0]>30){
-										error=6;
+										error=-6;
 									}
 									break;
 								case 10:
 									diasMes=31;
 									if(Fecha[n][0]>31){
-										error=6;
+										error=-6;
 									}
 									break;
 								case 11:
 									diasMes=30;
 									if(Fecha[n][0]>30){
-										error=6;
+										error=-6;
 									}
 									break;
 								case 12:
 									diasMes=31;
 									if(Fecha[n][0]>31){
-										error=6;
+										error=-6;
 									}
 									break;
 								default:
-									error=6;
+									error=-6;
 							}
 							//Si el año es menor que el actual
 							if(FechaActual[2]>Fecha[n][2]){ 
-								error=6;					//error
+								error=-6;					//error
 							}else{
 								aux=Fecha[n][2]-FechaActual[2];	
 								//si la diferencia de años es mayor que uno
 								if(aux>1){	
 									//error: estará fuera del horizonte
-									error=6;
+									error=-6;
 								}else{
 									//si el mes es pasado al actual
 									if(FechaActual[1]>Fecha[n][1]){ 
-										error=6;			//error
+										error=-6;			//error
 									}else{		//otro caso
 										//Distinto año
 										if (aux==1){ 
 										//	printf("Distinto año\n");
 											if(!((Fecha[n][1]==1)&&(FechaActual[1]==12))){ //no es enero y diciembre
-												error=6;		//error
+												error=-6;		//error
 											}else{ //Si lo son
 												if(aux==1){ //Si son de meses diferentes
 													if(FechaActual[0]+TAM-diasMes<Fecha[n][0]){//Fuera del horizonte
-														error=6; //error
+														error=-6; //error
 													}else{
 														aux=diasMes-FechaActual[0];
 														aux=aux+Fecha[n][0];
@@ -245,11 +245,11 @@ int main(int argc, char *argv[]){
 										}else{
 											aux=Fecha[n][1]-FechaActual[1];
 											if(aux>1){
-												error=6;
+												error=-1;
 											}else{ 
 												if(aux==1){ //Si son de meses diferentes
 													if(FechaActual[0]+TAM-diasMes-1<Fecha[n][0]){//Fuera del horizonte
-														error=6; //error
+														error=-6; //error
 													}else{
 															aux=diasMes-FechaActual[0];
 															aux=aux+Fecha[n][0];
@@ -258,9 +258,9 @@ int main(int argc, char *argv[]){
 													
 												}else{//CASO del mismo mes
 													if(FechaActual[0]>Fecha[n][0]){//Fecha antigua
-														error=6;
+														error=-6;
 													}else if(FechaActual[0]+TAM-1<Fecha[n][0]){//Fecha fuera del horizonte
-														error=6;
+														error=-6;
 													}else{
 														aux=Fecha[n][0]-FechaActual[0];
 														diasNO[aux]=1;
@@ -274,13 +274,13 @@ int main(int argc, char *argv[]){
 						}
 					}
 					/*Comprobamos si es error sintactico*/
-					if (error==5){
+					if (error==-5){
 						printf("Error=%d\n",error);
-						printf("ERROR5:\nDias incorrectos. Utilizar la siguiente notacion:\n");
+						printf("ERROR5:\nFechas introducidas incorrectos. Utilizar la siguiente notacion:\n");
 						printf("dd/mm/yyyy\n");
 					/*Comprobamos si la fecha está dentro de fechas posibles*/
-					}else if(error==6){
-						printf("ERROR6:\nFecha incorrecta fuera del horizonte\n");
+					}else if(error==-6){
+						printf("ERROR6:\nFecha incorrecta, fuera del horizonte");
 					}else{
 
 /*--------------------------------------------------------------------------
@@ -328,6 +328,7 @@ int main(int argc, char *argv[]){
 								}
 							}
 						}
+					//	imprimeMatriz(limite,TAM,matrix1);
 /*---------------------------------------------------------------------------
 ------------------------Matriz de pedidos quitando dias NO posibles----------
 ---------------------------------------------------------------------------*/
@@ -342,6 +343,9 @@ int main(int argc, char *argv[]){
 								}
 							}
 						}
+/*--------------------------------------------------------------------------------
+------------------------Matriz de pedidos quitando dias de pedidos consecutivos---
+--------------------------------------------------------------------------------*/
 
 						int guardar;
 						k = 0;
@@ -360,6 +364,10 @@ int main(int argc, char *argv[]){
 								k++;
 							}
 						}
+					//	imprimeMatriz(k, TAM, matrix1);
+/*---------------------------------------------------------------------------
+------------------------Matriz de pedidos quitando filas iguales-------------
+---------------------------------------------------------------------------*/
 						int filasPedidos=k;
 					
 						int h=0;
@@ -385,6 +393,7 @@ int main(int argc, char *argv[]){
 								h++;
 							}
 						}
+					//	imprimeMatriz(h,TAM,matrix);
 						filasPedidos=h;
 
 /*---------------------------------------------------------------------------------------
@@ -429,7 +438,7 @@ int main(int argc, char *argv[]){
 						*/
 						if(ficheros(TAM, &medicine)==1){
 							printf("ERROR7: Lectura de fichero no realizada\n");
-							error = 7;
+							error = -7;
 						}else{
 							
 /*----------------------------------------------------------------------------------------
@@ -463,7 +472,7 @@ int main(int argc, char *argv[]){
 							}
 
 							//Imprimimos la matriz por pantalla
-							//imprimeMatriz(exp4, numPedidos, matrixAux1);
+							imprimeMatriz(exp4, numPedidos, matrixAux1);
 
 						//	printf("Numero de posibilidades total: %d\n",filasPedidos*exp4);
 							
@@ -498,7 +507,7 @@ int main(int argc, char *argv[]){
 														
 							if(filasPedidos==0){
 								printf("ERROR8: No se puede obtener ninguna posibilidad con los datos introducidos\n");
-								error = 8;
+								error = -8;
 							}else{
 								// Una vez obtenidas todas las posibles combinaciones
 								// para un determinado horizonte, procedemos al cálculo
@@ -507,7 +516,7 @@ int main(int argc, char *argv[]){
 								/* evalua(int* pedidos, int horizonte, int retraso, int* stock) */
 								int x;
 								float J;
-								float Jmin = 1000;
+								float Jmin;
 								int *stock;
 								inicializaVector(TAM, &stock);
 								int *stockOptimo;
@@ -519,6 +528,13 @@ int main(int argc, char *argv[]){
 									inicializa(stock, TAM);
 									J = evalua(matrix[x], TAM, 0, stock, &medicine);
 								//	printf("\n%d->\tJ = %f\n",x,J);
+									if(x==0){
+										Jmin = J;
+										for(k=0; k<TAM; k++){
+											vectorOptimo[k]=matrix[x][k];
+											stockOptimo[k]=stock[k];
+										}
+									}
 									if(J <Jmin){
 										Jmin = J;
 										for(k=0; k<TAM; k++){
@@ -527,30 +543,26 @@ int main(int argc, char *argv[]){
 										}
 									}
 								}
-								if(Jmin==1000){
-									printf("ERROR9: No existe ninguna posibilidad válida para nuestro problema\n");
-									error = 9;
-								}else{
-									printf("Jmin= %f\nVector Óptimo de pedido:", Jmin);
-									for(x=0;x<TAM; x++){
-										printf("%d ",vectorOptimo[x] );
-									}
-									printf("\nStock del pedido óptimo:");
-									for(x=0;x<TAM; x++){
-										printf("%d ",stockOptimo[x] );
-									}
-									printf("\n");
-
-									//char **FechasOptimas;
-									int ** FechasPedido;
-									inicializaMatriz(numPedidos, 3, &FechasPedido);
-									//A partir de obtener los valores optimos de días de pedidos
-									//debemos obtener ahora las fechas con su correspondiente valor
-									printf("\n\n");
-									printf("===============\n===Resultado===\n===============\n\n");
-
-									obtieneFechasPedidos(vectorOptimo, TAM, FechasPedido);
+								printf("Jmin= %f\nVector Óptimo de pedido:", Jmin);
+								for(x=0;x<TAM; x++){
+									printf("%d ",vectorOptimo[x] );
 								}
+								printf("\nStock del pedido óptimo:");
+								for(x=0;x<TAM; x++){
+									printf("%d ",stockOptimo[x] );
+								}
+								printf("\n");
+
+								//char **FechasOptimas;
+								int ** FechasPedido;
+								inicializaMatriz(numPedidos, 3, &FechasPedido);
+								//A partir de obtener los valores optimos de días de pedidos
+								//debemos obtener ahora las fechas con su correspondiente valor
+								printf("\n\n");
+								printf("===============\n===Resultado===\n===============\n\n");
+
+								obtieneFechasPedidos(vectorOptimo, TAM, FechasPedido);
+								error = Jmin;
 							}
 						}
 					}
